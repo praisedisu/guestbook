@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+
+        </title>
+    </head>
+    <body>
+        <label for="name">NAME
+            <input type="text" id="name">
+        </label>
+        <button onclick="save()" style="background-color: green;">Save</button>
+        <legend id="leg"></legend>
+        <script>
+            function save(){
+                let name = document.getElementById("name").value
+                let guestinfo = {guestname : name}
+                localStorage.setItem("s", name)
+                document.getElementById("leg").innerHTML = localStorage.getItem("s")
+                
+                for ()
+            }
+        </script>
+    </body>
+</html>
