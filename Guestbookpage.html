@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="../html/praise/css/bootstrap.css">
+        <title>
+
+        </title>
+    </head>
+    <body class="container">
+            <form action="" role="form" class="form" name="form" onsubmit="saveGuest()">
+                <div class="form-group">
+                    <label for="name" class="label" >Name</label>
+                    <input type="text" id="name" class="form-control" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="age" class="label">Age</label>
+                    <input type="number" id="age" class="form-control" name="age" required>
+                </div>
+                <div class="form-group">
+                    <label for="email" class="label">Email</label>
+                    <input type="email" id="email" class="form-control" name="email" required>
+                </div>
+            <button  class="btn btn-success" value="submit" type="submit">save</button>
+            </form>
+            <p id="p"></p>
+        <table class="table table-bordered my-3">
+            <tr>
+                <th>S/N</th>
+                <th>Name</th>
+                <th>Age</th>
+                <th>email</th>
+            </tr>
+            <tbody id="tbody">
+            </tbody>
+        </table>
+        <button onclick="cleartable()" class="btn btn-danger">clear table</button>
+        <script>
+            updateTable()
+                function saveGuest(){
+                    const name = document.getElementById("name").value
+                    const age = document.getElementById("age").value
+                    const email = document.getElementById("email").value
+                    const guestObject = {
+                    guestname: name,
+                    guestage: age,
+                    guestemail: email
+                    }
+                const guestArray = getSavedGuestsFromLocalStorage()
+
+                guestArray.push(guestObject)
+                localStorage.setItem("guests", JSON.stringify(guestArray))
+                updateTable()
+                }
+
+                function getSavedGuestsFromLocalStorage() {
+                let guests = localStorage.getItem("guests")
+                text = document.getElementById("p").innerHTML
+                console.log(guests)
+                if (!guests) {
+                    guests = []
+                } else {
+                    guests = JSON.parse(guests)
+                }
+                return guests
+                }
+                function updateTable () {
+                    const guestArray = getSavedGuestsFromLocalStorage()
+
+                guestArray.forEach(function (guest) {
+                const tableBody = document.getElementById("tbody")
+                const row = document.createElement('tr')
+                const output = `
+                    <td>1</td>
+                    <td>${guest.guestname}</td>
+                    <td>${guest.guestage}</td>
+                    <td>${guest.guestemail}</td>
+                `
+                
+                row.innerHTML = output.trim()
+                tableBody.appendChild(row)
+                
+                    })
+                }
+                function cleartable(){
+                        localStorage.clear()
+                    }
+                </script>
+
+        </script>
+    </body>
+</html>
