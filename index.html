@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../html/praise/css/bootstrap.css">
+        <title>
+            Guestbook.com
+        </title>
+        <style>
+            .bgdark{
+                background-color: rgb(26, 23, 23);
+                color: white;
+            }
+            .bgwhite{
+                background-color: white;
+                color: black;
+            }
+        </style>
+    </head>
+    <body id="bodytext">
+        <div class="container">
+        <h1 class="text-center">Guestbook</h1>
+        <div class="btn-group">
+            <button class="btn btn-warning" onclick="darkmode()">
+                darkmode
+            </button>
+            <button class="btn btn-warning" onclick="lightmode()">
+                lightmode
+            </button>
+        </div>
+            <div onkeyup="check()">
+                <div class="form-inline py-4">
+                    <div class="form-group col-4">
+                        <label for="name" class="label" >Name:</label>
+                        <input type="text" id="name" class="form-control" required/>
+                    </div>
+                    <div class="form-group col-4">
+                        <label for="age" class="label">Age:</label>
+                        <input type="number" id="age" class="form-control" name="age" required/>
+                    </div>
+                    <div class="form-group col-4">
+                        <label for="email" class="label">Email:</label>
+                        <input type="email" id="email" class="form-control" name="email" required/>
+                    </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="Address">Address:</label>
+                        <input type="text" required class="form-control" id="address"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone:</label>
+                        <input type="tel" class="form-control"  id="phone"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="Date">Date:</label>
+                        <input type="date" class="form-control"  id="date"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="hobbies">hobbies:</label>
+                    <textarea name="hobbies" id="hobbies" cols="30" rows="10" class="form-control"></textarea>
+                </div>
+                
+            </div>
+            <div class="container">
+            <div class="d-flex justify-content-between">
+                <button  class="btn btn-success" onclick="saveGuest()" id="btn">save</button>
+            <div class="text-right">
+                <button class="btn btn-dark" onclick="clearinputs()">clear inputs</button>
+            </div>
+            </div>
+            <table class="table table-bordered my-3">
+                <tr>
+                    <th>S/N</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>email</th>
+                    <th>Address</th>
+                    <th>phone</th>
+                    <th>date</th>
+                    <th>hobbies</th>
+                </tr>
+                <tbody id="tbody">
+                    
+                </tbody>
+            </table>
+        <div class="d-flex justify-content-between">
+            <button onclick="cleartable()" class="btn btn-danger">clear table</button>
+        
+        <div class="text-right"><button class="btn btn-info" onclick="window.print()">print page</button></div>
+        </div>
+        </div>
+    </div>
+        <script>
+            updateTable()
+            document.getElementById('btn').disabled = true;
+            function darkmode(){
+                var element = document.body
+                element.className = "bgdark"
+            }
+            function lightmode(){
+                var element = document.body
+                element.className = "bgwhite"
+            }
+                //save guest function
+                function saveGuest(){
+                    const name = document.getElementById("name").value
+                    const age = document.getElementById("age").value
+                    const email = document.getElementById("email").value
+                    const address = document.getElementById("address").value
+                    const phone = document.getElementById("phone").value
+                    const date = document.getElementById("date").value
+                    const hobbies = document.getElementById("hobbies").value
+                    
+                    
+
+                    const guestObject = {
+                    guestname: name,
+                    guestage: age,
+                    guestemail: email,
+                    guestaddress: address,
+                    guestphone: phone,
+                    guestdate: date,
+                    guesthobbies: hobbies
+                    }
+                    const guestArray = getSavedGuestsFromLocalStorage()
+                    guestArray.push(guestObject)
+                    localStorage.setItem("guests", JSON.stringify(guestArray))
+                    updateTable()
+               
+                }
+                //getSavedGuestsFromLocalStorage function
+                function getSavedGuestsFromLocalStorage() {
+                    let guests = localStorage.getItem("guests")
+
+                    if (!guests) {
+                        guests = []
+                    } else {
+                        guests = JSON.parse(guests)
+                    }
+                    return guests
+                }
+                // update table function
+                function updateTable () {
+                    document.getElementById("tbody").innerHTML = ""
+                    const guestArray = getSavedGuestsFromLocalStorage()
+                    let count = 0
+                        guestArray.forEach(function (guest, index) {
+                        const tableBody = document.getElementById("tbody")
+                        const row = document.createElement('tr')
+                        count++
+                            
+                        const output = `
+                            <td>${count}</td>
+                            <td>${guest.guestname}</td>
+                            <td>${guest.guestage}</td>
+                            <td>${guest.guestemail}</td>
+                            <td>${guest.guestaddress}</td>
+                            <td>${guest.guestphone}</td>
+                            <td>${guest.guestdate}</td>
+                            <td>${guest.guesthobbies}</td>
+                            <td><button class="btn btn-danger" onclick=del(`+index+`)>delete</button></td>
+                            <td><button class="btn btn-info" id="edi" onclick="edit(`+index+`)" >Edit</button></td>
+                            
+                        `
+
+                        row.innerHTML = output.trim()
+                        tableBody.appendChild(row)
+                        })
+                    }
+                    //del function
+                    function del(index){
+                        const guestArray = getSavedGuestsFromLocalStorage()
+                        guestArray.splice(index, 1)
+                        localStorage.clear()
+                        document.location.reload()
+                        localStorage.setItem("guests", JSON.stringify(guestArray))
+                    }
+                    //edit function
+                    function edit(index){
+                        const guestArray = getSavedGuestsFromLocalStorage()
+                        guestArray[index]
+                        const guestObject = guestArray[index]
+                        document.getElementById("name").value = guestObject.guestname;
+                        document.getElementById("age").value = guestObject.guestage;
+                        document.getElementById("email").value = guestObject.guestemail;
+                        document.getElementById("address").value = guestObject.guestaddress;
+                        document.getElementById("phone").value = guestObject.guestphone;
+                        document.getElementById("date").value = guestObject.guestdate;
+                        document.getElementById("hobbies").value = guestObject.guesthobbies;
+                        check()
+                        guestArray.splice(index,1)
+                        var guestcon = guestArray
+                        localStorage.clear()
+                        localStorage.setItem("guests", JSON.stringify(guestcon))
+                    }
+
+                    function clearinputs(){
+                        document.getElementById("name").value = ""
+                        document.getElementById("age").value = ""
+                        document.getElementById("email").value = ""
+                        document.getElementById("address").value = ""
+                        document.getElementById("phone").value = ""
+                        document.getElementById("date").value = ""
+                        document.getElementById("hobbies").value = ""
+                        window.location.reload()
+                    }
+
+                    //cleartable function
+                    function cleartable(){
+                        localStorage.clear()
+                        document.getElementById("tbody").innerHTML = ""
+                    }
+                    // check function
+                function check(){
+                    
+                    if(document.getElementById("name").value === "")
+                        {
+                            document.getElementById('btn').disabled = true;
+                        }
+                    else{
+                            document.getElementById('btn').disabled = false;
+                        }
+                    if(document.getElementById("age").value === "")
+                        {
+                            document.getElementById('btn').disabled = true;
+                        }
+                    else{
+                            document.getElementById('btn').disabled = false;
+                        }
+                    if(document.getElementById("email").value === "")
+                        {
+                            document.getElementById('btn').disabled = true;
+                        }
+                    else{
+                            document.getElementById('btn').disabled = false;
+                        }
+                    if(document.getElementById("address").value === "")
+                        {
+                            document.getElementById('btn').disabled = true;
+                        }
+                    else{
+                            document.getElementById('btn').disabled = false;
+                        }
+                    }
+                    
+        </script>
+    </body>
+</html>
